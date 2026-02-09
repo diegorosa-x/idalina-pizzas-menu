@@ -9,7 +9,6 @@ Projeto construído com **Next.js + Supabase**, focado em simplicidade, performa
 
 [🌐 Ver cardápio online](https://idalina-pizzas-menu.vercel.app)
 
----
 
 ## ✨ Funcionalidades
 
