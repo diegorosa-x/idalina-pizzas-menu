@@ -4,38 +4,39 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import { Category, Product, CartItem } from "@/types";
 
+import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
 import CategoryNav from "@/components/CategoryNavigation/CategoryNav";
 import ProductCard from "@/components/ProductCard/ProductCard";
 import GeminiRecommender from "@/components/GeminiRecommender/GeminiRecommender";
+import WhatsAppButton from "@/components/WhatsAppButton/WhatsAppButton";
 
-import AdminAuth from "@/components/Admin/AdminAuth";
-import AdminPanel from "@/components/Admin/AdminPanel";
+import AdminAuth from "@/components/Admin/Auth/AdminAuth";
+import AdminPanel from "@/components/Admin/AdminPanel/AdminPanel";
 
 import { MenuService } from "@/services/MenuService";
-import { RESTAURANT_NAME } from "@/config/constants";
-import Header from "./Header/Header";
-import WhatsAppButton from "./WhatsAppButton/WhatsAppButton";
-import Footer from "./Footer/Footer";
 
 const AppClient: React.FC = () => {
   // Routing state
   const [currentView, setCurrentView] = useState<"menu" | "admin">("menu");
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
-  // Data state initialized from persistent storage
-  const [menuItems, setMenuItems] = useState<Product[]>(() =>
-    MenuService.getMenu(),
-  );
+  // Data state
+  const [menuItems, setMenuItems] = useState<Product[]>([]);
   const [activeCategory, setActiveCategory] = useState<Category>(
     Category.SIMPLE,
   );
   const [cart, setCart] = useState<CartItem[]>([]);
 
-  // Carregar dados iniciais e lidar com "roteamento" via hash
+  // Load menu + hash routing
   useEffect(() => {
+    (async () => {
+      const items = await MenuService.getMenu();
+      setMenuItems(items);
+    })();
+
     const handleHashChange = () => {
-      if (window.location.hash === "#admin") setCurrentView("admin");
-      else setCurrentView("menu");
+      setCurrentView(window.location.hash === "#admin" ? "admin" : "menu");
     };
 
     window.addEventListener("hashchange", handleHashChange);
@@ -44,9 +45,15 @@ const AppClient: React.FC = () => {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-  const handleUpdateMenu = (newItems: Product[]) => {
-    setMenuItems(newItems);
-    MenuService.saveMenu(newItems);
+  const handleUpdateMenu = async (newItems: Product[]) => {
+    setMenuItems(newItems); // atualiza UI imediatamente (UX boa)
+
+    try {
+      await MenuService.saveMenu(newItems);
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao salvar alterações no servidor");
+    }
   };
 
   const filteredProducts = useMemo(() => {
@@ -81,7 +88,7 @@ const AppClient: React.FC = () => {
     return <AdminPanel products={menuItems} onUpdate={handleUpdateMenu} />;
   }
 
-  // View: Public Menu (layout intacto conforme solicitado)
+  // View: Public Menu (layout intacto)
   return (
     <div className="min-h-screen pb-32">
       <Header />

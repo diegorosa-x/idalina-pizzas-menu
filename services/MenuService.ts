@@ -1,32 +1,26 @@
-import { PIZZA_DATA } from '@/config/constants';
+// services/MenuService.ts
 import { Product } from '@/types';
 
-const STORAGE_KEY = 'bella_pizza_menu_data';
-
 export const MenuService = {
-  getMenu(): Product[] {
-    if (typeof window === 'undefined') return PIZZA_DATA; // SSR safety
+  async getMenu(): Promise<Product[]> {
+    const res = await fetch('/api/menu', { cache: 'no-store' });
+    const json = await res.json();
+    return json.items ?? [];
+  },
 
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        return JSON.parse(saved) as Product[];
-      } catch (e) {
-        console.error('Erro ao carregar dados do menu.', e);
-        return PIZZA_DATA;
-      }
+  async saveMenu(items: Product[]): Promise<void> {
+    const res = await fetch('/api/menu', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-admin-token': process.env.NEXT_PUBLIC_ADMIN_TOKEN!,
+      },
+      body: JSON.stringify({ items }),
+    });
+
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error || 'Erro ao salvar');
     }
-    return PIZZA_DATA;
-  },
-
-  saveMenu(data: Product[]): void {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  },
-
-  resetMenu(): void {
-    if (typeof window === 'undefined') return;
-    localStorage.removeItem(STORAGE_KEY);
-    window.location.reload();
   },
 };
