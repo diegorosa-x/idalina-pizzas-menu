@@ -4,10 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { AdminHeaderProps } from "../types/MenuItem.type";
 
-const AdminHeader: React.FC<AdminHeaderProps> = ({
-  hasActivePromotions,
-  onCreate,
-}) => {
+const AdminHeader: React.FC<AdminHeaderProps> = ({ hasActivePromotions }) => {
   const router = useRouter();
 
   return (
@@ -30,14 +27,6 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
         </div>
 
         <div className="flex flex-row gap-2">
-          <button
-            onClick={onCreate}
-            className="mt-4 bg-green-600 text-white px-4 py-2 rounded-xl text-xs font-bold
-             hover:bg-green-700 active:scale-95 transition-all"
-          >
-            + Novo item
-          </button>
-
           <button
             onClick={() => router.replace("/")}
             className="mt-4 bg-stone-900  text-white px-4 py-2 rounded-xl text-xs font-bold"

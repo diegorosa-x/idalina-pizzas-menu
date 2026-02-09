@@ -3,14 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { RESTAURANT_NAME } from "@/config/constants";
-
-type BrandSize = "sm" | "md" | "lg";
-type BrandVariant = "light" | "dark";
-
-interface BrandProps {
-  variant?: BrandVariant;
-  size?: BrandSize;
-}
+import { BrandProps, BrandSize } from "./type";
 
 const imageSizeMap: Record<BrandSize, number> = {
   sm: 32,

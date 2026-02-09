@@ -10,7 +10,7 @@ const Header: React.FC = () => {
       className="relative h-64 w-full flex flex-col justify-end p-6 bg-cover bg-center"
       style={{
         backgroundImage:
-          "linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.8)), url('/assets/img/banner.png')",
+          "linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.8)), url(https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1200&q=80)",
       }}
     >
       <div className="z-10 text-white">
